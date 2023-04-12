@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import javax.lang.model.util.ElementScanner14;
@@ -12,6 +13,7 @@ class main{
     public static int error_line = 0;
     public static int error_position = 0;
 
+    public static ArrayList<String> outputs = new ArrayList<String>();
 
     public static boolean isBracketExist(char token){
 
@@ -23,37 +25,37 @@ class main{
     public static boolean printBracket(char token){
         
         if(token == '('){
-            System.out.println("LEFTPAR "+current_line+":"+(current_index+1));
+            outputs.add("LEFTPAR "+current_line+":"+(current_index+1));
             return true;
         }
         
         
         else if(token==')'){
-            System.out.println("RIGHTPAR "+current_line+":"+(current_index+1));
+            outputs.add("RIGHTPAR "+current_line+":"+(current_index+1));
             return true;
         }   
               
 
         else if(token=='['){
-            System.out.println("LEFTSQUAREB "+current_line+":"+(current_index+1));
+            outputs.add("LEFTSQUAREB "+current_line+":"+(current_index+1));
             return true;
         }
             
           
         else if(token==']'){
-            System.out.println("RIGHTSQUAREB "+current_line+":"+(current_index+1));
+            outputs.add("RIGHTSQUAREB "+current_line+":"+(current_index+1));
             return true;
         }
             
 
         else if(token=='{'){
-            System.out.println("LEFTCURLYB "+current_line+":"+(current_index+1));
+            outputs.add("LEFTCURLYB "+current_line+":"+(current_index+1));
             return true;
         }
         
             
         else if(token=='}'){
-            System.out.println("RIGHTCURLYB "+current_line+":"+(current_index+1));
+            outputs.add("RIGHTCURLYB "+current_line+":"+(current_index+1));
             return true;
         }
             
@@ -74,7 +76,8 @@ class main{
 
     // Method for boolean literals
     public static boolean booleanLiterals(String line){
-
+        if(current_index>=line.length())
+            return true;
         int i;
         String boolean_checker = "";
         for(i=current_index;i<line.length() && line.charAt(i)!= ' ';i++){
@@ -84,8 +87,10 @@ class main{
         }  
         
         if(boolean_checker.equals("true") || boolean_checker.equals("false")){
-            System.out.println("BOOLEAN "+current_line+":"+(current_index+1));
+            outputs.add("BOOLEAN "+current_line+":"+(current_index+1));
             current_index = i;
+            if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
+                printBracket(line.charAt(i));
             return true;
         }
 
@@ -98,6 +103,8 @@ class main{
 
     public static boolean charLiterals(String line){
 
+        if(current_index>=line.length())
+            return true;
         int i = 0;
         if((int)line.charAt(current_index) ==39){
             String error  = "";
@@ -109,17 +116,16 @@ class main{
                 System.out.println("ERROR");
                 System.exit(0);
             }
-            else if(current_index+3<line.length()){
-                System.out.println("CHAR "+current_line+":"+(current_index+1));
-                current_index+=3;
+            else if(current_index+2<line.length()){
+                outputs.add("CHAR "+current_line+":"+(current_index+1));
+                current_index+=2;
                 return true;
             }
                 
             
             else if(current_index+3>=line.length()){
-                System.out.println("CHAR "+current_line+":"+(current_index+1));
-                current_index = 0;
-                return true;
+                outputs.add("ERROR");
+                System.exit(0);
             }
 
         }
@@ -134,17 +140,18 @@ class main{
         
     }
     public static boolean checkIdentifierFirstElement(char token){
-        return token=='!' || token=='?' || token=='>' || token=='<' || token=='=' || token=='/' || token==':' || token=='*' || token=='+' || token=='-'|| token=='.' ||
+        return token=='!' || token=='?' || token=='>' || token=='<' || token=='=' || token=='/' || token==':' || token=='+' || token=='-'|| token=='.' || token=='*' ||
         (token>='a' && token<='z');
     }
     public static boolean identifierLiteral(String line){
-
+        if(current_index>=line.length())
+            return true;
         int i = current_index;
 
         String error ="";
         boolean error_exist = false;
         if(checkIdentifierFirstElement(line.charAt(current_index))){
-            
+            error+=line.charAt(current_index);
             for(i = current_index+1;i<line.length() && line.charAt(i) !=' ';i++){
                 
                 if(isBracketExist(line.charAt(i)))
@@ -167,8 +174,11 @@ class main{
                 System.exit(0);
             }
             else{
-                System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
+                outputs.add("IDENTIFIER "+current_line+":"+(current_index+1));
                 current_index = i;
+                if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
+                    printBracket(line.charAt(i));
+                return true;
             }
             
 
@@ -182,13 +192,24 @@ class main{
     // Haven't brainstormed yet = )
     public static boolean stringLiterals(String line){
 
+        int i;
+
+        if(line.charAt(current_index)=='"'){
+            for (i = current_index; i < line.length() && line.charAt(i) != ' '; i++) {
+                
+
+
+            }
+        }
+        
 
         return false;
     }
 
     public static boolean keywordLiteral(String line){
 
-
+        if(current_index>=line.length())
+            return true;
         String identifier = "";
         int i;
         for(i = current_index;i<line.length() && line.charAt(i) != ' ';i++){
@@ -200,8 +221,10 @@ class main{
         }
 
         if(identifier.equals("define") || identifier.equals("let") || identifier.equals("cond") || identifier.equals("if") ||identifier.equals("begin")){
-            System.out.println(identifier.toUpperCase()+" "+current_line+":"+(current_index+1));
+            outputs.add(identifier.toUpperCase()+" "+current_line+":"+(current_index+1));
             current_index = i;
+            if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
+                printBracket(line.charAt(i));
             return true;
             
         }
@@ -209,10 +232,16 @@ class main{
             
     
     }
+
+    public static void printResults(){
+        for(int i = 0;i<outputs.size();i++)
+            System.out.println(outputs.get(i));
+    }
     // Function for number literals.
     public static boolean numberLiterals(String line){
 
-
+        if(current_index>=line.length())
+            return true;
         // Hexadecimal condition 
         // This condition checks the input according to hexadecimal notation and binary notation.
         int i = 0;
@@ -254,7 +283,7 @@ class main{
                     
 
                     // If input isn't convenient with hexadecimal literal, error happens.
-                    if(isHex && !((line.charAt(i)>='A' && line.charAt(i)<='F') || (line.charAt(i)>='0' && line.charAt(i)<='9')))
+                    if(isHex && !((line.charAt(i)>='A' && line.charAt(i)<='F') || (line.charAt(i)>='0' && line.charAt(i)<='9') || (line.charAt(i)>='a' && line.charAt(i)<='f')))
                         error_exist = true;
                        
 
@@ -274,8 +303,10 @@ class main{
 
             // Otherwise, line and position that token is been is displayed on the console.
             else{
-                System.out.println("NUMBER "+current_line+":"+(current_index+1));
+                outputs.add("NUMBER "+current_line+":"+(current_index+1));
                 current_index = i;
+                if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
+                    printBracket(line.charAt(i));
                 return true;
             }          
         }
@@ -314,7 +345,7 @@ class main{
                     
 
                 // If there is more than one exponential symbol in the token, error occurs.
-                else if(exponential_used && (line.charAt(i)=='e' || line.charAt(i)=='E')){
+                else if(exponential_used && (line.charAt(i)=='e' || line.charAt(i)=='E' || line.charAt(i)=='.')){
                     error_exist = true;
                     error_line = current_line;
                     error_position = current_index+1;
@@ -375,8 +406,11 @@ class main{
 
             // Otherwise, line and position that token is been is displayed on the console.
             else{
-                System.out.println("NUMBER "+current_line+":"+(current_index+1));
+                outputs.add("NUMBER "+current_line+":"+(current_index+1));
                 current_index = i;
+
+                if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
+                    printBracket(line.charAt(current_index));
                 return true;
             }
 
@@ -396,7 +430,9 @@ class main{
         try{
             File file = new File("input.txt");
             Scanner input = new Scanner(file);
-            String string_literal = "";
+            boolean string_literal = false;
+            int string_literal_line = 0;
+            int string_literal_index = 0;
             boolean isStringComplete = true;
             // Iteration through lines
             while(input.hasNextLine()){
@@ -408,37 +444,59 @@ class main{
                 
                 while(current_index<line.length()){
                     
+
+                    if(string_literal && line.charAt(current_index)=='"'){
+                        string_literal = false;
+                        outputs.add("STRING "+string_literal_line+":"+(string_literal_index+1));
+                        
+                        current_index++;
+                        if(current_index>line.length()-1)
+                            break;
+                    }
+                        
+                    
+
                     if(line.charAt(current_index)=='~'){
-                        System.out.println("COMMENT "+current_line+":"+(current_index+1));
+                        outputs.add("COMMENT "+current_line+":"+(current_index+1));
                         break;
                     }
+
+                    if(line.charAt(current_index)=='"'){
+                        string_literal_line = current_line;
+                        string_literal_index = current_index;
+                        string_literal = true;
+                    }
+                        
                     boolean isFound = false;
                     // As long as there is no space, other circumstances are considered.
-                    if(line.charAt(current_index)!=' '){
+
+                    
+                    if(!string_literal && line.charAt(current_index)!=' '){
 
 
-                        isFound = numberLiterals(line); 
+                        if((checkIdentifierFirstElement(line.charAt(current_index)) && current_index==line.length()-1) || (current_index<line.length()-1 && line.charAt(current_index+1)==' ')){
+                            outputs.add("IDENTIFIER "+current_line+":"+(current_index+1));
+                            isFound = true;
+                        }
+                        
+                        else isFound = numberLiterals(line);
+                         
+                        if(!isFound)
+                            isFound = keywordLiteral(line);
 
                         if(!isFound)
                             isFound = booleanLiterals(line);
 
-                        if(current_index>=line.length())   
-                            break;
+                        
                         if(!isFound)
                             isFound = identifierLiteral(line);
-                        if(current_index>=line.length())   
-                            break;
-                        if(!isFound)
-                            isFound = keywordLiteral(line);
-                        if(current_index>=line.length())   
-                            break;
+                        
+                        
                         if(!isFound)
                             isFound = stringLiterals(line);
-                        if(current_index>=line.length())   
-                            break;
+                        
                         if(!isFound)
                             isFound = printBracket(line.charAt(current_index));
-                        
                         
                         
                         if(!isFound)
@@ -460,7 +518,7 @@ class main{
                 current_index = 0;
             }
             input.close();
-
+            printResults();
                 
         }
         catch(FileNotFoundException e){
