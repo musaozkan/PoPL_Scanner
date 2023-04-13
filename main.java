@@ -1,8 +1,6 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
-import javax.lang.model.util.ElementScanner14;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -102,7 +100,6 @@ class main{
     
 
     public static boolean charLiterals(String line){
-
         if(current_index>=line.length())
             return true;
         int i = 0;
@@ -113,18 +110,23 @@ class main{
 
 
             if(current_index+2==line.length() || (int)line.charAt(current_index+2)!=39){
-                System.out.println("ERROR");
+                System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
             else if(current_index+2<line.length()){
                 outputs.add("CHAR "+current_line+":"+(current_index+1));
-                current_index+=2;
+
+                if(line.charAt(current_index+2)=='\'' && line.charAt(current_index+1) == '\\'){
+                    current_index+=3;
+
+                }
+                else current_index+=2;
                 return true;
             }
                 
             
             else if(current_index+3>=line.length()){
-                outputs.add("ERROR");
+                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
 
@@ -135,13 +137,13 @@ class main{
 
     public static boolean identifierElementCheck(char token){
 
-        return token =='+' || token=='-' || token=='.' || (token>='0' && token<='9') || (token>='a' && token<='z');
+        return token =='+' || token=='-' || token=='.' || (token>='0' && token<='9') || (token>='a' && token<='z') || (token>='A' && token<='Z');
 
         
     }
     public static boolean checkIdentifierFirstElement(char token){
         return token=='!' || token=='?' || token=='>' || token=='<' || token=='=' || token=='/' || token==':' || token=='+' || token=='-'|| token=='.' || token=='*' ||
-        (token>='a' && token<='z');
+        (token>='a' && token<='z') || (token>='A' && token<='Z');
     }
     public static boolean identifierLiteral(String line){
         if(current_index>=line.length())
@@ -197,7 +199,7 @@ class main{
         if(line.charAt(current_index)=='"'){
             for (i = current_index; i < line.length() && line.charAt(i) != ' '; i++) {
                 
-
+                
 
             }
         }
@@ -237,6 +239,7 @@ class main{
         for(int i = 0;i<outputs.size();i++)
             System.out.println(outputs.get(i));
     }
+
     // Function for number literals.
     public static boolean numberLiterals(String line){
 
@@ -250,7 +253,7 @@ class main{
 
         // It includes hexadecimal literal and binary literal in
         if(isHexorBin(line)){
-            error = "";
+            error = "0";
             
             if(line.length()-current_index-1==1){
                 error_position = current_index+1;
@@ -428,7 +431,11 @@ class main{
         
 
         try{
-            File file = new File("input.txt");
+            String error_for_string = "\"";
+            Scanner file_input = new Scanner(System.in);
+            System.out.print("Please enter the name of your file: ");
+            String file_name = file_input.nextLine();
+            File file = new File(file_name);
             Scanner input = new Scanner(file);
             boolean string_literal = false;
             int string_literal_line = 0;
@@ -444,29 +451,35 @@ class main{
                 
                 while(current_index<line.length()){
                     
+                    
+                    
 
-                    if(string_literal && line.charAt(current_index)=='"'){
+                    if(string_literal && current_index+1<line.length() && line.charAt(current_index)=='\\' && line.charAt(current_index+1) =='\"'){
+                        error_for_string+=line.charAt(current_index);
+                        current_index++;
+                    }
+                    else if(string_literal && line.charAt(current_index)=='"'){
                         string_literal = false;
                         outputs.add("STRING "+string_literal_line+":"+(string_literal_index+1));
                         
                         current_index++;
-                        if(current_index>line.length()-1)
-                            break;
-                    }
                         
+                    }
+                    else if(string_literal)
+                        error_for_string+=line.charAt(current_index);
                     
 
                     if(line.charAt(current_index)=='~'){
                         outputs.add("COMMENT "+current_line+":"+(current_index+1));
                         break;
                     }
-
-                    if(line.charAt(current_index)=='"'){
+                    
+                    if(!string_literal && line.charAt(current_index)=='"'){
                         string_literal_line = current_line;
                         string_literal_index = current_index;
                         string_literal = true;
                     }
-                        
+                    
                     boolean isFound = false;
                     // As long as there is no space, other circumstances are considered.
 
@@ -488,12 +501,11 @@ class main{
                             isFound = booleanLiterals(line);
 
                         
-                        if(!isFound)
+                        if(!isFound){
                             isFound = identifierLiteral(line);
+                        }
+                            
                         
-                        
-                        if(!isFound)
-                            isFound = stringLiterals(line);
                         
                         if(!isFound)
                             isFound = printBracket(line.charAt(current_index));
@@ -517,13 +529,18 @@ class main{
                 current_line++;
                 current_index = 0;
             }
+            if(string_literal){
+                
+                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error_for_string+"'");
+                System.exit(0);
+            }
             input.close();
             printResults();
                 
         }
         catch(FileNotFoundException e){
             System.out.println("File not found.");
-            e.printStackTrace();
+            
         }
         
     }
