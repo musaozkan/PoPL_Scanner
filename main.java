@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -10,7 +12,7 @@ class main{
     public static int current_index = 0;
     public static int error_line = 0;
     public static int error_position = 0;
-
+    public static FileWriter output;
 
     public static boolean isBracketExist(char token){
 
@@ -19,39 +21,45 @@ class main{
     // Conditions for brackets
 
     // Haven't finished yet. I will check later on.
-    public static boolean printBracket(char token){
+    public static boolean printBracket(char token) throws IOException{
         
         if(token == '('){
+            output.write("LEFTPAR "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTPAR "+current_line+":"+(current_index+1));
             return true;
         }
         
         
         else if(token==')'){
+            output.write("RIGHTPAR "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTPAR "+current_line+":"+(current_index+1));
             return true;
         }   
               
 
         else if(token=='['){
+            output.write("LEFTSQUAREB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTSQUAREB "+current_line+":"+(current_index+1));
             return true;
         }
             
           
         else if(token==']'){
+            output.write("RIGHTSQUAREB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTSQUAREB "+current_line+":"+(current_index+1));
             return true;
         }
             
 
         else if(token=='{'){
+            output.write("LEFTCURLYB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTCURLYB "+current_line+":"+(current_index+1));
             return true;
         }
         
             
         else if(token=='}'){
+            output.write("RIGHTCURLYB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTCURLYB "+current_line+":"+(current_index+1));
             return true;
         }
@@ -72,7 +80,7 @@ class main{
 
 
     // Method for boolean literals
-    public static boolean booleanLiterals(String line){
+    public static boolean booleanLiterals(String line) throws IOException{
         if(current_index>=line.length())
             return true;
         int i;
@@ -85,6 +93,7 @@ class main{
         
         if(boolean_checker.equals("true") || boolean_checker.equals("false")){
             System.out.println("BOOLEAN "+current_line+":"+(current_index+1));
+            output.write("BOOLEAN "+current_line+":"+(current_index+1)+"\n");
             current_index = i;
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
@@ -98,7 +107,7 @@ class main{
     
     
 
-    public static boolean charLiterals(String line){
+    public static boolean charLiterals(String line) throws IOException{
         if(current_index>=line.length())
             return true;
         int i = 0;
@@ -109,12 +118,13 @@ class main{
 
 
             if(current_index+2==line.length() || (int)line.charAt(current_index+2)!=39){
+                output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
             else if(current_index+2<line.length()){
                 System.out.println("CHAR "+current_line+":"+(current_index+1));
-
+                output.write("CHAR "+current_line+":"+(current_index+1)+"\n");
                 if(line.charAt(current_index+2)=='\'' && line.charAt(current_index+1) == '\\'){
                     current_index+=3;
 
@@ -125,6 +135,7 @@ class main{
                 
             
             else if(current_index+3>=line.length()){
+                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
@@ -144,7 +155,7 @@ class main{
         return token=='!' || token=='?' || token=='>' || token=='<' || token=='=' || token=='/' || token==':' || token=='+' || token=='-'|| token=='.' || token=='*' ||
         (token>='a' && token<='z') || (token>='A' && token<='Z');
     }
-    public static boolean identifierLiteral(String line){
+    public static boolean identifierLiteral(String line) throws IOException{
         if(current_index>=line.length())
             return true;
         int i = current_index;
@@ -172,10 +183,12 @@ class main{
 
             if(error_exist){
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
+                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
             else{
                 System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
+                output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
                 current_index = i;
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(i));
@@ -190,24 +203,8 @@ class main{
     }
 
 
-    // Haven't brainstormed yet = )
-    public static boolean stringLiterals(String line){
 
-        int i;
-
-        if(line.charAt(current_index)=='"'){
-            for (i = current_index; i < line.length() && line.charAt(i) != ' '; i++) {
-                
-                
-
-            }
-        }
-        
-
-        return false;
-    }
-
-    public static boolean keywordLiteral(String line){
+    public static boolean keywordLiteral(String line) throws IOException{
 
         if(current_index>=line.length())
             return true;
@@ -223,6 +220,7 @@ class main{
 
         if(identifier.equals("define") || identifier.equals("let") || identifier.equals("cond") || identifier.equals("if") ||identifier.equals("begin")){
             System.out.println(identifier.toUpperCase()+" "+current_line+":"+(current_index+1));
+            output.write(identifier.toUpperCase()+" "+current_line+":"+(current_index+1)+"\n");
             current_index = i;
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
@@ -237,7 +235,7 @@ class main{
 
 
     // Function for number literals.
-    public static boolean numberLiterals(String line){
+    public static boolean numberLiterals(String line) throws IOException{
 
         if(current_index>=line.length())
             return true;
@@ -296,12 +294,14 @@ class main{
             }
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
+                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
 
             // Otherwise, line and position that token is been is displayed on the console.
             else{
+                output.write("NUMBER "+current_line+":"+(current_index+1)+"\n");
                 System.out.println("NUMBER "+current_line+":"+(current_index+1));
                 current_index = i;
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
@@ -401,6 +401,7 @@ class main{
 
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
+                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.exit(0);
             }
@@ -408,6 +409,7 @@ class main{
             // Otherwise, line and position that token is been is displayed on the console.
             else{
                 System.out.println("NUMBER "+current_line+":"+(current_index+1));
+                output.write("NUMBER "+current_line+":"+(current_index+1)+"\n");
                 current_index = i;
 
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
@@ -425,10 +427,12 @@ class main{
     }
 
 
-    public static void main(String [] args){
+    public static void main(String [] args) throws IOException{
         
 
         try{
+            output = new FileWriter("output.txt");
+          
             String error_for_string = "\"";
             Scanner file_input = new Scanner(System.in);
             System.out.print("Please enter the name of your file: ");
@@ -459,9 +463,10 @@ class main{
                     else if(string_literal && line.charAt(current_index)=='"'){
                         string_literal = false;
                         System.out.println("STRING "+string_literal_line+":"+(string_literal_index+1));
+                        output.write("STRING "+string_literal_line+":"+(string_literal_index+1)+"\n");
                         error_for_string ="";
                         current_index++;
-                        System.out.println(current_index);
+
                         if(current_index>line.length()-1)
                             break;
                         
@@ -472,6 +477,7 @@ class main{
 
                     if(line.charAt(current_index)=='~'){
                         System.out.println("COMMENT "+current_line+":"+(current_index+1));
+                        output.write("COMMENT "+current_line+":"+(current_index+1)+"\n");
                         break;
                     }
                     
@@ -488,9 +494,10 @@ class main{
                     if(!string_literal && line.charAt(current_index)!=' '){
 
 
-                        if((checkIdentifierFirstElement(line.charAt(current_index)) && current_index==line.length()-1) || (current_index<line.length()-1 && line.charAt(current_index+1)==' ') &&
-                        line.charAt(current_index)=='+' || line.charAt(current_index)=='-' || line.charAt(current_index)=='.'){
+                        if((checkIdentifierFirstElement(line.charAt(current_index)) && current_index==line.length()-1) || ((current_index<line.length()-1 && line.charAt(current_index+1)==' ') &&
+                        (line.charAt(current_index)=='+' || line.charAt(current_index)=='-' || line.charAt(current_index)=='.'))){
                             System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
+                            output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
                             isFound = true;
                         }
                         
@@ -498,7 +505,7 @@ class main{
 
                             isFound = numberLiterals(line);
                         } 
-                        System.out.println(current_index);
+                        
                         if(!isFound)
                             isFound = keywordLiteral(line);
 
@@ -537,9 +544,11 @@ class main{
             if(string_literal){
                 
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error_for_string+"'");
+                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error_for_string+"'");
                 System.exit(0);
             }
             input.close();
+            output.close();
                 
         }
         catch(FileNotFoundException e){
