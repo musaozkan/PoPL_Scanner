@@ -60,16 +60,16 @@ class main{
 			secondLevelForm();
 			indentation_count--;
 
-			if(nextToken == "RIGHTPAR") {
+			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}
 			else{
-                System.out.println("ERROR missing pharanthesis in topLevelForm");
+                System.out.println("SYNTAX ERROR! ) is required.");
                 System.exit(0);
             }
 				
 		}else {
-			System.out.println("ERROR in topLevelForm");
+			System.out.println("SYNTAX ERROR! ( is required.");
 			
 		}
 	}
@@ -84,13 +84,22 @@ class main{
 		}
 		else if(nextToken.equals("LEFTPAR")) {
             getNextToken();
-			funCall();
+
+            if(nextToken.equals("IDENTIFIER"))
+			    funCall();
+            else{
+                System.out.println("IDENTIFIER required.");
+                System.exit(0);
+            }
 			indentation_count--;
 			
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
-			}else
-				System.out.println("ERROR in secondLevelForm");
+			}else{
+                System.out.println("SYNTAX ERROR! ) is required.");
+                System.exit(0);
+            }
+				
 		}
         else System.out.println("Error at secondLevelForm");
 	}
@@ -117,22 +126,29 @@ class main{
 		
 		else if(nextToken.equals("LEFTPAR")) {
 			getNextToken();
-			getNextToken();
+            
+            if(nextToken.equals("IDENTIFIER"))
+			    getNextToken();
+            else{
+                System.out.println("IDENTFIIER required.");
+                System.exit(0);
+            }
 			argList();
-			if(nextToken == "RIGHTPAR") {
+			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}else
-				System.out.println("ERROR in definitionRight");
+				System.out.println("ERROR in definitionRight! ) required.");
 			statements();
 			indentation_count--;
 		}
+        else System.out.println("Error at definitionRight");
 	}
 	
 	static void argList() {
 		System.out.printf("%"+ (indentation_count+9) +"s\n","<ArgList>");
 		indentation_count++;
 		
-		if(nextToken == "IDENTIFIER") {
+		if(nextToken.equals("IDENTIFIER")) {
 			getNextToken();
 			argList();
 			indentation_count--;
@@ -153,10 +169,13 @@ class main{
 			statements();			
 			indentation_count--;
 		}
-		else {
+		else if(!nextToken.equals("RIGHTPAR")){
 			expression();
 			indentation_count--;
 		}
+        else{
+            System.out.println("ERROR! ) doesn't fit here.");
+        }
 	}
 	
     // Look back at expressions
@@ -181,7 +200,7 @@ class main{
 		System.out.printf("%"+ (indentation_count+12) +"s\n","<expression>");
 		indentation_count++;
 
-		if(nextToken.equals("IDENTIFIER") || nextToken.equals("NUMBER") || nextToken.equals("CHAR") || nextToken.equals("BOOLEAN")) {
+		if(nextToken.equals("IDENTIFIER") || nextToken.equals("NUMBER") || nextToken.equals("CHAR") || nextToken.equals("BOOLEAN") || nextToken.equals("STRING")) {
 			getNextToken();
 			indentation_count--;
 		}
@@ -193,7 +212,7 @@ class main{
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}else
-				System.out.println("ERROR in expression missing close pharanthesis");
+				System.out.println("ERROR! ) is required.");
 		}
 	}
 	
@@ -221,12 +240,7 @@ class main{
 			indentation_count--;			
 		}
 		
-		else if(nextToken.equals("BOOLEAN")) {
-			beginExpression();
-			indentation_count--;			
-		}
-		
-		else if(nextToken == "IDENTIFIER") {
+		else if(nextToken.equals("IDENTIFIER")) {
 			funCall();
 			indentation_count--;			
 		}
@@ -268,12 +282,20 @@ class main{
 		}
 		else if(nextToken.equals("IDENTIFIER")) {		//IDENTIFIER ( <VarDefs> ) <Statements>
 			getNextToken();//now token is on OPENRD
-			getNextToken();//token was on OPENRD and now next OPENRD		BURALAR PATLAYABİLİR VAZİYET ALALIM
+
+            if(nextToken.equals("LEFTPAR"))
+			    getNextToken();//token was on OPENRD and now next OPENRD		BURALAR PATLAYABİLİR VAZİYET ALALIM
+            else{
+                System.out.println("ERROR! ( is required.");
+                System.exit(0);
+            }
 			varDefs();
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
-			else
-				System.out.println("ERROR in letExpr after IDENTIFIER");
+			else{
+                System.out.println("ERROR in letExpr after IDENTIFIER! ) is required.");
+            }
+				
 			statements();
 			indentation_count--;
 		}
@@ -283,8 +305,17 @@ class main{
 		System.out.printf("%"+ (indentation_count+9) +"s\n","<VarDefs>");
 		indentation_count++;
 
-		getNextToken();
-		getNextToken();//token was on OPENRD and now on IDENTIFIER		sıkıntı çıkarsa buradaki getNextToken'lardan birini önceki fonksiyonun else if'inin içine koyup deneyelim
+        if(nextToken.equals("LEFTPAR"))
+		    getNextToken();
+        else{
+            System.out.println("ERROR! ( required.");
+        }
+        if(nextToken.equals("IDENTIFIER"))
+		    getNextToken();//token was on OPENRD and now on IDENTIFIER		sıkıntı çıkarsa buradaki getNextToken'lardan birini önceki fonksiyonun else if'inin içine koyup deneyelim
+        
+        else{
+            System.out.println("ERROR! IDENTIFIER required.");
+        }
 		expression();
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
@@ -299,6 +330,7 @@ class main{
 		indentation_count++;
 		
 		if(nextToken.equals("LEFTPAR")) {
+            
 			varDefs();	
 			indentation_count--;
 		}
@@ -313,7 +345,12 @@ class main{
 		System.out.printf("%"+ (indentation_count+16) +"s\n","<CondExpression>");
 		indentation_count++;
 
-		getNextToken();
+        if(nextToken.equals("cond"))
+		    getNextToken();
+        else{
+            System.out.println("ERROR! cond is required.");
+            System.exit(0);
+        }
 		condBranches();
 		indentation_count--;
 	}
@@ -322,14 +359,18 @@ class main{
 		System.out.printf("%"+ (indentation_count+14) +"s\n","<CondBranches>");
 		indentation_count++;
 
-		getNextToken();
+        if(nextToken.equals("LEFTPAR"))
+		    getNextToken();
+        else{
+            System.out.println("ERROR! ( is required.");
+        }
 		expression();
 		statements();
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
 		else
-			System.out.println("ERROR in condBranches");
-		condBranches();
+			System.out.println("ERROR in condBranches! ) is required.");
+		condBranch();
 		indentation_count--;
 	}
 	
@@ -345,7 +386,7 @@ class main{
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
 			else
-				System.out.println("ERROR in condBranch");
+				System.out.println("ERROR in condBranch! ) is required");
 		}
 		else {
 			System.out.printf("%"+(indentation_count+6) +"s\n","    __");
@@ -358,7 +399,12 @@ class main{
 		System.out.printf("%"+ (indentation_count+14) +"s\n","<IfExpression>");
 		indentation_count++;
 
-		getNextToken();
+        if(nextToken.equals("if"))
+		    getNextToken();
+        else{
+            System.out.println("ERROR! if statement required.");
+            System.exit(0);
+        }
 		expression();
 		expression();
 		endExpression();
@@ -370,7 +416,8 @@ class main{
 		System.out.printf("%"+ (indentation_count+15) +"s\n","<EndExpression>");
 		indentation_count++;
 
-		if(nextToken.equals("IDENTIFIER") || nextToken.equals("NUMBER") || nextToken.equals("CHAR") || nextToken.equals("BOOLEAN") || nextToken.equals("LEFTPAR")) {
+		if(nextToken.equals("IDENTIFIER") || nextToken.equals("NUMBER") || nextToken.equals("CHAR") || nextToken.equals("BOOLEAN") || nextToken.equals("LEFTPAR") ||
+        nextToken.equals("STRING")) {
 			expression();
 			indentation_count--;
 		}
@@ -385,7 +432,12 @@ class main{
 		System.out.printf("%"+ (indentation_count+17) +"s\n","<BeginExpression>");
 		indentation_count++;
 
-		getNextToken();
+        if(nextToken.equals("begin"))
+		    getNextToken();
+        else{
+            System.out.println("ERROR! begin required.");
+            System.exit(0);
+        }
 		statements();
 		indentation_count--;
 		
@@ -571,8 +623,9 @@ class main{
             }
             else{
                 System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
-                output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
                 tokens.add("IDENTIFIER");
+                output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
+
                 current_index = i;
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(i));
@@ -890,6 +943,7 @@ class main{
                         if((checkIdentifierFirstElement(line.charAt(current_index)) && current_index==line.length()-1) || ((current_index<line.length()-1 && line.charAt(current_index+1)==' ') &&
                         (line.charAt(current_index)=='+' || line.charAt(current_index)=='-' || line.charAt(current_index)=='.'))){
                             System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
+                            tokens.add("IDENTIFIER");
                             output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
                             isFound = true;
                         }
@@ -944,7 +998,7 @@ class main{
             }
             input.close();
             output.close();
-            
+            System.out.println(tokens);
             nextToken = tokens.get(parser_index);
             program();
                 
