@@ -52,6 +52,7 @@ class main{
 		}
 		else {
 			System.out.printf("%"+(indentation_count+6) +"s\n","    __");
+            output.write(String.format("%"+(indentation_count+6) +"s\n","    __"));
 			indentation_count--;
 			return;
 		}
@@ -74,14 +75,16 @@ class main{
 				getNextToken();
 			}
 			else{
-                System.out.println("SYNTAX ERROR! ) is required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
             }
 				
 		}else {
-			System.out.println("SYNTAX ERROR! ( is required.");
+			System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
             output.flush();
             output.close();
 			System.exit(0);
@@ -104,7 +107,8 @@ class main{
             if(nextToken.equals("IDENTIFIER"))
 			    funCall();
             else{
-                System.out.println("IDENTIFIER required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -114,14 +118,20 @@ class main{
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}else{
-                System.out.println("SYNTAX ERROR! ) is required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
             }
 				
 		}
-        else System.out.println("Error at secondLevelForm");
+        else{
+           
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: Error at secondLevelForm.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: Error at secondLevelForm.");
+            
+        } 
 	}
 	
 	static void definition() throws IOException{
@@ -154,7 +164,8 @@ class main{
             if(nextToken.equals("IDENTIFIER"))
 			    getNextToken();
             else{
-                System.out.println("IDENTFIIER required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -163,7 +174,8 @@ class main{
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}else{
-                System.out.println("ERROR in definitionRight! ) required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -172,7 +184,13 @@ class main{
 			statements();
 			indentation_count--;
 		}
-        else System.out.println("Error at definitionRight");
+        else{
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: input mismatch in definitionRight");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: input mismatch in definitionRight");
+            output.flush();
+            output.close();
+            System.exit(0);
+        } 
 	}
 	
 	static void argList() throws IOException{
@@ -189,7 +207,8 @@ class main{
 		}
 		else {
 			System.out.printf("%"+(indentation_count+6) +"s\n","    __");//burada problem var gibi
-			indentation_count--;
+			output.write(String.format("%"+(indentation_count+6) +"s\n","    __"));
+            indentation_count--;
 			return;														// indentation_count burada da indirilebilir				
 		}
 	}
@@ -210,7 +229,8 @@ class main{
 			indentation_count--;
 		}
         else{
-            System.out.println("ERROR! ) doesn't fit here.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -231,7 +251,8 @@ class main{
 			indentation_count--;
 		}
 		else {
-			System.out.printf("%"+(indentation_count+6) +"s\n","    __");			
+			System.out.printf("%"+(indentation_count+6) +"s\n","    __");
+            output.write(String.format("%"+(indentation_count+6) +"s\n","    __"));		
 			indentation_count--;
 			return;
 		}
@@ -254,7 +275,8 @@ class main{
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -262,6 +284,14 @@ class main{
             indentation_count--;
 			
 		}
+        else{
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expression.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expression.");
+            output.flush();
+            output.close();
+            System.exit(0);
+        }
+    
         
 	}
 	
@@ -297,6 +327,7 @@ class main{
 		}
         else{
             System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expr.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expr.");
             output.flush();
             output.close();
             System.exit(0);
@@ -339,7 +370,8 @@ class main{
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
 			else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -354,7 +386,8 @@ class main{
             if(nextToken.equals("LEFTPAR"))
 			    getNextToken();//token was on OPENRD and now next OPENRD		BURALAR PATLAYABİLİR VAZİYET ALALIM
             else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -363,7 +396,8 @@ class main{
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
 			else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -372,6 +406,14 @@ class main{
 			statements();
 			indentation_count--;
 		}
+        else{
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in LetExpr.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' token mismatch in LetExpr");
+            output.flush();
+            output.close();
+            System.exit(0);
+        }
+        
 	}
 	
 	static void varDefs() throws IOException{
@@ -383,7 +425,8 @@ class main{
         if(nextToken.equals("LEFTPAR"))
 		    getNextToken();
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -392,7 +435,8 @@ class main{
 		    getNextToken();//token was on OPENRD and now on IDENTIFIER		sıkıntı çıkarsa buradaki getNextToken'lardan birini önceki fonksiyonun else if'inin içine koyup deneyelim
         
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: Identifier is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -401,7 +445,8 @@ class main{
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
 		else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -422,7 +467,8 @@ class main{
 			indentation_count--;
 		}
 		else {
-			System.out.printf("%"+(indentation_count+6) +"s\n","    __");			
+			System.out.printf("%"+(indentation_count+6) +"s\n","    __");		
+            output.write(String.format("%"+(indentation_count+6) +"s\n","    __"));	
 			indentation_count--;
 			return;
 		}
@@ -438,6 +484,7 @@ class main{
 		    getNextToken();
         else{
             System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: COND is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'COND' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -456,6 +503,7 @@ class main{
 		    getNextToken();
         else{
             System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -465,7 +513,8 @@ class main{
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
 		else{
-            System.out.println("SYNTAX ERROR in condBranches ["+positions.get(parser_index)+"]: ')'is expected.");
+            System.out.println("SYNTAX ERROR in condBranches ["+positions.get(parser_index)+"]: ')' is expected.");
+            output.write("SYNTAX ERROR in condBranches ["+positions.get(parser_index)+"]: ')' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -489,7 +538,8 @@ class main{
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
 			else{
-                System.out.println("SYNTAX ERROR in condBranch ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.out.println("SYNTAX ERROR in condBranch ["+positions.get(parser_index)+"]: ')' is expected.");
+                output.write("SYNTAX ERROR in condBranch ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -512,6 +562,7 @@ class main{
 		    getNextToken();
         else{
             System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IF is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IF is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -536,6 +587,7 @@ class main{
 		}
 		else {
 			indentation_count--;
+            output.write(String.format("%"+(indentation_count+6) +"s\n","    __"));
 			System.out.printf("%"+(indentation_count+6) +"s\n","    __");			
 			return;
 		}
@@ -551,6 +603,7 @@ class main{
 		    getNextToken();
         else{
             System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: BEGIN is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: BEGIN is expected.");
             output.flush();
             output.close();
             System.exit(0);

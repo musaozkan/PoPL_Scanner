@@ -63,6 +63,7 @@ RIGHTPAR 4:31
      <ArgList>
       IDENTIFIER (n)
       <ArgList>
+           __
      RIGHTPAR ())
      <Statements>
       <expression>
@@ -94,6 +95,7 @@ RIGHTPAR 4:31
                 NUMBER (0)
                RIGHTPAR ())
                <VarDef>
+                    __
           RIGHTPAR ())
           <Statements>
            <expression>
@@ -113,6 +115,7 @@ RIGHTPAR 4:31
                    <expression>
                     IDENTIFIER (n)
                    <expressions>
+                        __
                RIGHTPAR ())
               <expression>
                IDENTIFIER (cur)
@@ -138,6 +141,7 @@ RIGHTPAR 4:31
                          <expression>
                           IDENTIFIER (cur)
                          <expressions>
+                              __
                      RIGHTPAR ())
                     <expressions>
                      <expression>
@@ -152,7 +156,10 @@ RIGHTPAR 4:31
                           <expression>
                            NUMBER (1)
                           <expressions>
+                               __
                       RIGHTPAR ())
                      <expressions>
+                          __
                 RIGHTPAR ())
             RIGHTPAR ())
+SYNTAX ERROR [4:15]: ')' is expected.
