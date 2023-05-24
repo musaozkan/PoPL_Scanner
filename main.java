@@ -14,10 +14,13 @@ class main{
     public static int error_position = 0;
     public static FileWriter output;
     public static ArrayList<String> tokens = new ArrayList<>();
+    public static ArrayList<String> positions = new ArrayList<>();
+    public static ArrayList<String> token_content = new ArrayList<>();
     public static int token_index = 0;
     public static int parser_index = 0;
     public static String nextToken = "";
     public static int indentation_count = 0;
+
 
     public static boolean isBracketExist(char token){
     
@@ -208,12 +211,16 @@ class main{
 		else if(nextToken.equals("LEFTPAR")) {
 			getNextToken();
 			expr();
-			indentation_count--;
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
-			}else
-				System.out.println("ERROR! ) is required.");
+			}else{
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.exit(0);
+            }
+            indentation_count--;
+			
 		}
+        
 	}
 	
 	static void expr() {
@@ -244,6 +251,10 @@ class main{
 			funCall();
 			indentation_count--;			
 		}
+        else{
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expr.");
+            System.exit(0);
+        }
 	}
 	
 	static void funCall() {
@@ -274,8 +285,10 @@ class main{
 			varDefs();
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
-			else
-				System.out.println("ERROR in letExpr after pharanthesys");
+			else{
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.exit(0);
+            }
 			
 			statements();
 			indentation_count--;
@@ -286,14 +299,15 @@ class main{
             if(nextToken.equals("LEFTPAR"))
 			    getNextToken();//token was on OPENRD and now next OPENRD		BURALAR PATLAYABİLİR VAZİYET ALALIM
             else{
-                System.out.println("ERROR! ( is required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
                 System.exit(0);
             }
 			varDefs();
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
 			else{
-                System.out.println("ERROR in letExpr after IDENTIFIER! ) is required.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.exit(0);
             }
 				
 			statements();
@@ -308,19 +322,23 @@ class main{
         if(nextToken.equals("LEFTPAR"))
 		    getNextToken();
         else{
-            System.out.println("ERROR! ( required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
+            System.exit(0);
         }
         if(nextToken.equals("IDENTIFIER"))
 		    getNextToken();//token was on OPENRD and now on IDENTIFIER		sıkıntı çıkarsa buradaki getNextToken'lardan birini önceki fonksiyonun else if'inin içine koyup deneyelim
         
         else{
-            System.out.println("ERROR! IDENTIFIER required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: Identifier is expected.");
+            System.exit(0);
         }
 		expression();
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
-		else
-			System.out.println("ERROR in vardefs");
+		else{
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+            System.exit(0);
+        }
 		varDef();
 		indentation_count--;
 	}
@@ -348,7 +366,7 @@ class main{
         if(nextToken.equals("cond"))
 		    getNextToken();
         else{
-            System.out.println("ERROR! cond is required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: COND is expected.");
             System.exit(0);
         }
 		condBranches();
@@ -362,14 +380,18 @@ class main{
         if(nextToken.equals("LEFTPAR"))
 		    getNextToken();
         else{
-            System.out.println("ERROR! ( is required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '('is expected.");
+            System.exit(0);
         }
 		expression();
 		statements();
 		if(nextToken.equals("RIGHTPAR"))
 			getNextToken();
-		else
-			System.out.println("ERROR in condBranches! ) is required.");
+		else{
+            System.out.println("SYNTAX ERROR in condBranches ["+positions.get(parser_index)+"]: ')'is expected.");
+            System.exit(0);
+        }
+			
 		condBranch();
 		indentation_count--;
 	}
@@ -385,8 +407,10 @@ class main{
 			indentation_count--;
 			if(nextToken.equals("RIGHTPAR"))
 				getNextToken();
-			else
-				System.out.println("ERROR in condBranch! ) is required");
+			else{
+                System.out.println("SYNTAX ERROR in condBranch ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.exit(0);
+            }
 		}
 		else {
 			System.out.printf("%"+(indentation_count+6) +"s\n","    __");
@@ -402,7 +426,7 @@ class main{
         if(nextToken.equals("if"))
 		    getNextToken();
         else{
-            System.out.println("ERROR! if statement required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IF is expected.");
             System.exit(0);
         }
 		expression();
@@ -435,7 +459,7 @@ class main{
         if(nextToken.equals("begin"))
 		    getNextToken();
         else{
-            System.out.println("ERROR! begin required.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: BEGIN is expected.");
             System.exit(0);
         }
 		statements();
@@ -452,6 +476,8 @@ class main{
         if(token == '('){
             output.write("LEFTPAR "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTPAR "+current_line+":"+(current_index+1));
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add("(");
             tokens.add("LEFTPAR");
             return true;
         }
@@ -461,6 +487,8 @@ class main{
             output.write("RIGHTPAR "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTPAR "+current_line+":"+(current_index+1));
             tokens.add("RIGHTPAR");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add(")");
             return true;
         }   
               
@@ -469,6 +497,8 @@ class main{
             output.write("LEFTSQUAREB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTSQUAREB "+current_line+":"+(current_index+1));
             tokens.add("LEFTSQUAREB");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add("[");
             return true;
         }
             
@@ -477,6 +507,8 @@ class main{
             output.write("RIGHTSQUAREB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTSQUAREB "+current_line+":"+(current_index+1));
             tokens.add("RIGHTSQUAREB");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add("]");
             return true;
         }
             
@@ -485,6 +517,8 @@ class main{
             output.write("LEFTCURLYB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("LEFTCURLYB "+current_line+":"+(current_index+1));
             tokens.add("LEFTCURLYB");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add("{");
             return true;
         }
         
@@ -493,6 +527,8 @@ class main{
             output.write("RIGHTCURLYB "+current_line+":"+(current_index+1)+"\n");
             System.out.println("RIGHTCURLYB "+current_line+":"+(current_index+1));
             tokens.add("RIGHTCURLYB");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add("}");
             return true;
         }
             
@@ -528,6 +564,8 @@ class main{
             output.write("BOOLEAN "+current_line+":"+(current_index+1)+"\n");
             current_index = i;
             tokens.add("BOOLEAN");
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add(boolean_checker);
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
             return true;
@@ -558,6 +596,8 @@ class main{
             else if(current_index+2<line.length()){
                 System.out.println("CHAR "+current_line+":"+(current_index+1));
                 output.write("CHAR "+current_line+":"+(current_index+1)+"\n");
+                positions.add(current_line+":"+(current_index+1));
+                token_content.add("'"+line.charAt(current_index+1)+"'"); // Reminder
                 if(line.charAt(current_index+2)=='\'' && line.charAt(current_index+1) == '\\'){
                     current_index+=3;
 
@@ -624,6 +664,8 @@ class main{
             else{
                 System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
                 tokens.add("IDENTIFIER");
+                positions.add(current_line+":"+(current_index+1));
+                token_content.add(error);
                 output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
 
                 current_index = i;
@@ -660,6 +702,8 @@ class main{
             output.write(identifier.toUpperCase()+" "+current_line+":"+(current_index+1)+"\n");
             current_index = i;
             tokens.add(identifier);
+            positions.add(current_line+":"+(current_index+1));
+            token_content.add(identifier);
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
             return true;
@@ -743,6 +787,8 @@ class main{
                 System.out.println("NUMBER "+current_line+":"+(current_index+1));
                 current_index = i;
                 tokens.add("NUMBER");
+                positions.add(current_line+":"+(current_index+1));
+                token_content.add(error);
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(i));
                 return true;
@@ -850,6 +896,8 @@ class main{
                 System.out.println("NUMBER "+current_line+":"+(current_index+1));
                 output.write("NUMBER "+current_line+":"+(current_index+1)+"\n");
                 tokens.add("NUMBER");
+                positions.add(current_line+":"+(current_index+1));
+                token_content.add(error);
                 current_index = i;
 
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
@@ -910,6 +958,7 @@ class main{
                         string_literal = false;
                         System.out.println("STRING "+string_literal_line+":"+(string_literal_index+1));
                         output.write("STRING "+string_literal_line+":"+(string_literal_index+1)+"\n");
+                        tokens.add("STRING");
                         error_for_string ="";
                         current_index++;
                         
@@ -944,6 +993,9 @@ class main{
                         (line.charAt(current_index)=='+' || line.charAt(current_index)=='-' || line.charAt(current_index)=='.'))){
                             System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
                             tokens.add("IDENTIFIER");
+                            positions.add(current_line+":"+(current_index+1));
+                            
+                            token_content.add(""+line.charAt(current_index));
                             output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
                             isFound = true;
                         }
@@ -1000,6 +1052,9 @@ class main{
             output.close();
             System.out.println(tokens);
             nextToken = tokens.get(parser_index);
+            System.out.println(tokens.size());
+            System.out.println(token_content.size());
+            System.out.println(positions.size());
             program();
                 
         }
