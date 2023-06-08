@@ -6,6 +6,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+// Contributors
+// Baris Giray Akman 150121822
+// Musa Ozkan 150121058
+// Abdullah Kan 150121076
+
+// This code implements both lexical analyzer and parse tree and prints the results on both console and on output.txt file.
+
 
 class main{
     public static int current_line = 1;
@@ -60,7 +67,7 @@ class main{
 	
 	static void topLevelForm() throws IOException{
 
-        String s1 = String.format("%"+ (indentation_count+14) +"s\n","<toplevelform>");
+        String s1 = String.format("%"+ (indentation_count+14) +"s\n","<ToplevelForm>");
 		output.write(s1);
 		System.out.print(s1);
 
@@ -69,22 +76,22 @@ class main{
 		if(nextToken.equals("LEFTPAR")) {
 			getNextToken();
 			secondLevelForm();
-			indentation_count--;
 
 			if(nextToken.equals("RIGHTPAR")) {
 				getNextToken();
 			}
 			else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
             }
+            indentation_count--;
 				
 		}else {
-			System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')'is expected.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+			System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
             output.flush();
             output.close();
 			System.exit(0);
@@ -92,7 +99,7 @@ class main{
 	}
 	
 	static void secondLevelForm() throws IOException{
-        String s1 = String.format("%"+ (indentation_count+17) +"s\n","<secondlevelform>");
+        String s1 = String.format("%"+ (indentation_count+17) +"s\n","<SecondLevelForm>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -107,8 +114,8 @@ class main{
             if(nextToken.equals("IDENTIFIER"))
 			    funCall();
             else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
-                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -128,14 +135,17 @@ class main{
 		}
         else{
            
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: Error at secondLevelForm.");
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: Error at secondLevelForm.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'define' or '(' expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'define' or '(' expected.");
+            output.flush();
+            output.close();
+            System.exit(0);
             
         } 
 	}
 	
 	static void definition() throws IOException{
-        String s1 = String.format("%"+ (indentation_count+12) +"s\n","<definition>");
+        String s1 = String.format("%"+ (indentation_count+12) +"s\n","<Definition>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -147,7 +157,7 @@ class main{
 	
 	
 	static void definitionRight() throws IOException {
-        String s1 = String.format("%"+ (indentation_count+17) +"s\n","<definitionRight>");
+        String s1 = String.format("%"+ (indentation_count+17) +"s\n","<DefinitionRight>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -164,8 +174,8 @@ class main{
             if(nextToken.equals("IDENTIFIER"))
 			    getNextToken();
             else{
-                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
-                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+                System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
+                output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
                 output.flush();
                 output.close();
                 System.exit(0);
@@ -185,8 +195,8 @@ class main{
 			indentation_count--;
 		}
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: input mismatch in definitionRight");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: input mismatch in definitionRight");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: '(' is expected." );
             output.flush();
             output.close();
             System.exit(0);
@@ -229,8 +239,8 @@ class main{
 			indentation_count--;
 		}
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' or define is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' or define is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -239,7 +249,7 @@ class main{
 	
     // Look back at expressions
 	static void expressions() throws IOException{
-        String s1 = String.format("%"+ (indentation_count+13) +"s\n","<expressions>");
+        String s1 = String.format("%"+ (indentation_count+13) +"s\n","<Expressions>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -259,7 +269,7 @@ class main{
 	}
 	
 	static void expression() throws IOException{	//IDENTIFIER | NUMBER | CHAR | BOOLEAN | STRING | ( <Expr> )
-        String s1 = String.format("%"+ (indentation_count+12) +"s\n","<expression>");
+        String s1 = String.format("%"+ (indentation_count+12) +"s\n","<Expression>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -285,8 +295,8 @@ class main{
 			
 		}
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expression.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expression.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier', 'number', char, boolean, 'string', or '(' expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier', 'number', 'char', 'boolean', 'string', or '(' expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -296,7 +306,7 @@ class main{
 	}
 	
 	static void expr() throws IOException{
-        String s1 = String.format("%"+ (indentation_count+6) +"s\n","<expr>");
+        String s1 = String.format("%"+ (indentation_count+6) +"s\n","<Expr>");
 		output.write(s1);
 		System.out.print(s1);
 		indentation_count++;
@@ -326,8 +336,8 @@ class main{
 			indentation_count--;			
 		}
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expr.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in expr.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'let', 'cond', 'if', 'begin', or 'identifier' expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'let', 'cond', 'if', 'begin', or 'identifier' expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -407,8 +417,8 @@ class main{
 			indentation_count--;
 		}
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: token mismatch in LetExpr.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: ')' token mismatch in LetExpr");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' or '(' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' or '(' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -435,8 +445,8 @@ class main{
 		    getNextToken();//token was on OPENRD and now on IDENTIFIER		sıkıntı çıkarsa buradaki getNextToken'lardan birini önceki fonksiyonun else if'inin içine koyup deneyelim
         
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IDENTIFIER is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'identifier' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -483,8 +493,8 @@ class main{
         if(nextToken.equals("cond"))
 		    getNextToken();
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: COND is expected.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'COND' is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'cond' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'cond' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -561,8 +571,8 @@ class main{
         if(nextToken.equals("if"))
 		    getNextToken();
         else{
-            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: IF is expected.");
-            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: IF is expected.");
+            System.out.println("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'if' is expected.");
+            output.write("SYNTAX ERROR ["+positions.get(parser_index)+"]: 'if' is expected.");
             output.flush();
             output.close();
             System.exit(0);
@@ -734,14 +744,15 @@ class main{
             
 
 
-            if(current_index+2==line.length() || (int)line.charAt(current_index+2)!=39){
+            if(current_index+2==line.length() || (current_index+2<line.length() && (int)line.charAt(current_index+2)!=39)){
+                error = line.charAt(current_index)+""+line.charAt(current_index+1);
                 output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
                 output.flush();
                 output.close();
                 System.exit(0);
             }
-            else if(current_index+2<line.length()){
+            else if(current_index+2<line.length() && (int)line.charAt(current_index+2)==39){
                 System.out.println("CHAR "+current_line+":"+(current_index+1));
                 output.write("CHAR "+current_line+":"+(current_index+1)+"\n");
                 positions.add(current_line+":"+(current_index+1));
@@ -757,7 +768,8 @@ class main{
             }
                 
             
-            else if(current_index+3>=line.length()){
+            else if(current_index+2<line.length() && (int)line.charAt(current_index+2)!=39){
+                error = line.charAt(current_index)+""+line.charAt(current_index+1);
                 output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
                 output.flush();
@@ -922,8 +934,7 @@ class main{
                     else if( !isHex && line.charAt(i)!='0' && line.charAt(i)!='1'){
                         error_exist = true;
                     }
-                        
-                    
+
                 }
             }
             // If there is error, it is displayed on the console and program is shut down
@@ -970,9 +981,6 @@ class main{
                 if(isBracketExist(line.charAt(i))){
                     break;
                 }
-                    
-
-                
 
                 // If the element of the token is not convenient with floating point literal, error occurs.
                 if(line.charAt(i) != 'E' && line.charAt(i) !='e' && line.charAt(i)!='+' && line.charAt(i) !='-' && line.charAt(i)!='.' && (line.charAt(i)<'0' || line.charAt(i)>'9')){
@@ -1027,9 +1035,6 @@ class main{
                 // If dot sign exist in the token, program will iterate according to floating point literal.
                 if(line.charAt(i)=='.')
                     isFloatFirst = true;
-                
-
-                
 
             }
 
@@ -1070,7 +1075,6 @@ class main{
         
     }
 
-
     public static void printArray(){
         for(int i = 0;i<tokens.size();i++)
             System.out.println(tokens.get(i));
@@ -1082,7 +1086,6 @@ class main{
 
         try{
             output = new FileWriter("output.txt");
-            System.out.println(output);
             String error_for_string = "\"";
             Scanner file_input = new Scanner(System.in);
             System.out.print("Please enter the name of your file: ");
@@ -1115,6 +1118,9 @@ class main{
                         System.out.println("STRING "+string_literal_line+":"+(string_literal_index+1));
                         output.write("STRING "+string_literal_line+":"+(string_literal_index+1)+"\n");
                         tokens.add("STRING");
+                        positions.add(string_literal_line+":"+(string_literal_index+1));
+                        token_content.add(error_for_string+"\"");
+
                         error_for_string ="";
                         current_index++;
                         
@@ -1171,32 +1177,21 @@ class main{
                         if(!isFound){
                             isFound = identifierLiteral(line);
                         }
-                            
-                        
-                        
+
                         if(!isFound)
                             isFound = printBracket(line.charAt(current_index));
-                        
-                        
+
                         if(!isFound)
                             isFound = charLiterals(line);
-                        
-                        
-                        
-                        
+
                         // Before number literal, identifier literal will be settled here.
                         // Other literals will be here!
                     }
                     
                     current_index++;
-                    
                 }
-                
-
                 current_line++;
                 current_index = 0;
-
-
             }
             if(string_literal){
                 
@@ -1207,11 +1202,9 @@ class main{
                 System.exit(0);
             }
             input.close();
-            System.out.println(tokens);
+
             nextToken = tokens.get(parser_index);
-            System.out.println(tokens.size());
-            System.out.println(token_content.size());
-            System.out.println(positions.size());
+
             program();
             output.close();
                 
