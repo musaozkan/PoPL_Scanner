@@ -52,12 +52,12 @@ RIGHTPAR 4:29
 RIGHTPAR 4:30
 RIGHTPAR 4:31
 <Program>
- <toplevelform>
+ <ToplevelForm>
   LEFTPAR (()
-  <secondlevelform>
-   <definition>
+  <SecondLevelForm>
+   <Definition>
     define (define)
-    <definitionRight>
+    <DefinitionRight>
      LEFTPAR (()
      IDENTIFIER (fibonacci)
      <ArgList>
@@ -66,9 +66,9 @@ RIGHTPAR 4:31
            __
      RIGHTPAR ())
      <Statements>
-      <expression>
+      <Expression>
        LEFTPAR (()
-       <expr>
+       <Expr>
         <LetExpression>
          let (let)
          <LetExpr>
@@ -77,88 +77,88 @@ RIGHTPAR 4:31
           <VarDefs>
            LEFTPAR (()
            IDENTIFIER (prev)
-           <expression>
+           <Expression>
             NUMBER (0)
            RIGHTPAR ())
            <VarDef>
             <VarDefs>
              LEFTPAR (()
              IDENTIFIER (cur)
-             <expression>
+             <Expression>
               NUMBER (1)
              RIGHTPAR ())
              <VarDef>
               <VarDefs>
                LEFTPAR (()
                IDENTIFIER (i)
-               <expression>
+               <Expression>
                 NUMBER (0)
                RIGHTPAR ())
                <VarDef>
                     __
           RIGHTPAR ())
           <Statements>
-           <expression>
+           <Expression>
             LEFTPAR (()
-            <expr>
+            <Expr>
              <IfExpression>
               if (if)
-              <expression>
+              <Expression>
                LEFTPAR (()
-               <expr>
+               <Expr>
                 <FunCall>
                  IDENTIFIER (=)
-                 <expressions>
-                  <expression>
+                 <Expressions>
+                  <Expression>
                    IDENTIFIER (i)
-                  <expressions>
-                   <expression>
+                  <Expressions>
+                   <Expression>
                     IDENTIFIER (n)
-                   <expressions>
+                   <Expressions>
                         __
                RIGHTPAR ())
-              <expression>
+              <Expression>
                IDENTIFIER (cur)
               <EndExpression>
-               <expression>
+               <Expression>
                 LEFTPAR (()
-                <expr>
+                <Expr>
                  <FunCall>
                   IDENTIFIER (fib)
-                  <expressions>
-                   <expression>
+                  <Expressions>
+                   <Expression>
                     IDENTIFIER (cur)
-                   <expressions>
-                    <expression>
+                   <Expressions>
+                    <Expression>
                      LEFTPAR (()
-                     <expr>
+                     <Expr>
                       <FunCall>
                        IDENTIFIER (+)
-                       <expressions>
-                        <expression>
+                       <Expressions>
+                        <Expression>
                          IDENTIFIER (prev)
-                        <expressions>
-                         <expression>
+                        <Expressions>
+                         <Expression>
                           IDENTIFIER (cur)
-                         <expressions>
+                         <Expressions>
                               __
                      RIGHTPAR ())
-                    <expressions>
-                     <expression>
+                    <Expressions>
+                     <Expression>
                       LEFTPAR (()
-                      <expr>
+                      <Expr>
                        <FunCall>
                         IDENTIFIER (+)
-                        <expressions>
-                         <expression>
+                        <Expressions>
+                         <Expression>
                           IDENTIFIER (i)
-                         <expressions>
-                          <expression>
+                         <Expressions>
+                          <Expression>
                            NUMBER (1)
-                          <expressions>
+                          <Expressions>
                                __
                       RIGHTPAR ())
-                     <expressions>
+                     <Expressions>
                           __
                 RIGHTPAR ())
             RIGHTPAR ())

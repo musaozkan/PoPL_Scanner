@@ -934,7 +934,6 @@ class main{
                     else if( !isHex && line.charAt(i)!='0' && line.charAt(i)!='1'){
                         error_exist = true;
                     }
-
                 }
             }
             // If there is error, it is displayed on the console and program is shut down
