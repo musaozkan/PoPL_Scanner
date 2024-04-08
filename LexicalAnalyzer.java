@@ -34,65 +34,44 @@ class LexicalAnalyzer{
         
         if(token == '('){
             output.write("LEFTPAR "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("LEFTPAR "+current_line+":"+(current_index+1));
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add("(");
             tokens.add("LEFTPAR");
-            return true;
         }
-        
         
         else if(token==')'){
             output.write("RIGHTPAR "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("RIGHTPAR "+current_line+":"+(current_index+1));
             tokens.add("RIGHTPAR");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add(")");
-            return true;
         }   
-              
-
+            
         else if(token=='['){
             output.write("LEFTSQUAREB "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("LEFTSQUAREB "+current_line+":"+(current_index+1));
             tokens.add("LEFTSQUAREB");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add("[");
-            return true;
+
         }
             
-          
         else if(token==']'){
             output.write("RIGHTSQUAREB "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("RIGHTSQUAREB "+current_line+":"+(current_index+1));
             tokens.add("RIGHTSQUAREB");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add("]");
-            return true;
         }
             
 
         else if(token=='{'){
             output.write("LEFTCURLYB "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("LEFTCURLYB "+current_line+":"+(current_index+1));
             tokens.add("LEFTCURLYB");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add("{");
-            return true;
         }
         
-            
         else if(token=='}'){
             output.write("RIGHTCURLYB "+current_line+":"+(current_index+1)+"\n");
-            System.out.println("RIGHTCURLYB "+current_line+":"+(current_index+1));
             tokens.add("RIGHTCURLYB");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add("}");
-            return true;
         }
-            
+        
+        else return false;
+        
+
+        System.out.println(tokens.get(tokens.size()-1)+" "+current_line+":"+(current_index+1));
+        positions.add(current_line+":"+(current_index+1));
+        token_content.add(token+"");
   
-        return false;
+        return true;
     }
 
 
