@@ -23,9 +23,6 @@ class main{
     public static ArrayList<String> positions = new ArrayList<>();
     public static ArrayList<String> token_content = new ArrayList<>();
     public static int token_index = 0;
-    public static int parser_index = 0;
-    public static String nextToken = "";
-    public static int indentation_count = 0;
 
 
     public static boolean isBracketExist(char token){
