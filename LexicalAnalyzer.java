@@ -30,6 +30,13 @@ class LexicalAnalyzer{
         return token==')' || token=='(' || token=='{' || token =='{' || token == '[' || token ==']';
     }
 
+    public static void shootError(String error) throws IOException{
+        output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
+        System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
+        output.flush();
+        output.close();
+    }
+
     public static boolean printBracket(char token) throws IOException{
         
         if(token == '('){
@@ -128,10 +135,7 @@ class LexicalAnalyzer{
 
             if(current_index+2==line.length() || (current_index+2<line.length() && (int)line.charAt(current_index+2)!=39)){
                 error = line.charAt(current_index)+""+line.charAt(current_index+1);
-                output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
-                System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
-                output.flush();
-                output.close();
+                shootError(error);
                 System.exit(0);
             }
             else if(current_index+2<line.length() && (int)line.charAt(current_index+2)==39){
@@ -152,10 +156,7 @@ class LexicalAnalyzer{
             
             else if(current_index+2<line.length() && (int)line.charAt(current_index+2)!=39){
                 error = line.charAt(current_index)+""+line.charAt(current_index+1);
-                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                output.flush();
-                output.close();
+                shootError(error);
                 System.exit(0);
             }
 
@@ -201,10 +202,7 @@ class LexicalAnalyzer{
             }
 
             if(error_exist){
-                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                output.flush();
-                output.close();
+                shootError(error);
                 System.exit(0);
             }
             else{
@@ -319,10 +317,7 @@ class LexicalAnalyzer{
             }
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
-                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                output.flush();
-                output.close();
+                shootError(error);
                 System.exit(0);
             }
 
@@ -425,10 +420,7 @@ class LexicalAnalyzer{
 
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
-                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error+"'");
-                output.flush();
-                output.close();
+                shootError(error);
                 System.exit(0);
             }
 
