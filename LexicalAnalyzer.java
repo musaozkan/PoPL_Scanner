@@ -13,7 +13,7 @@ import java.io.FileNotFoundException;
 // This code implements both lexical analyzer and parse tree and prints the results on both console and on output.txt file.
 
 
-class main{
+class LexicalAnalyzer{
     public static int current_line = 1;
     public static int current_index = 0;
     public static int error_line = 0;
@@ -603,11 +603,8 @@ class main{
                 System.exit(0);
             }
             input.close();
-
-            nextToken = tokens.get(parser_index);
             Parser parser = new Parser(tokens, token_content, positions, output);
             parser.program();
-
             output.close();
                 
         }
