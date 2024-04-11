@@ -30,56 +30,43 @@ class LexicalAnalyzer{
         return token==')' || token=='(' || token=='{' || token =='{' || token == '[' || token ==']';
     }
 
+    public static void handlePrints(int index, String content, String contentType) throws IOException{
+        System.out.println(contentType+" "+current_line+":"+(current_index+1));
+        output.write(contentType+" "+current_line+":"+(current_index+1)+"\n");
+        current_index = index;
+        tokens.add(contentType);
+        positions.add(current_line+":"+(current_index+1));
+        token_content.add(content);
+    }
+
     public static void shootError(String error) throws IOException{
         output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
         System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
         output.flush();
         output.close();
     }
-
-    public static boolean printBracket(char token) throws IOException{
-        
-        if(token == '('){
-            output.write("LEFTPAR "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("LEFTPAR");
+    public static boolean printBracket(char token) throws IOException {
+        String bracketType = switch (token) {
+            case '(' -> "LEFTPAR";
+            case ')' -> "RIGHTPAR";
+            case '[' -> "LEFTSQUAREB";
+            case ']' -> "RIGHTSQUAREB";
+            case '{' -> "LEFTCURLYB";
+            case '}' -> "RIGHTCURLYB";
+            default -> null;
+        };
+    
+        if (bracketType != null) {
+            output.write(bracketType + " " + current_line + ":" + (current_index + 1) + "\n");
+            tokens.add(bracketType);
+            System.out.println(tokens.get(tokens.size() - 1) + " " + current_line + ":" + (current_index + 1));
+            positions.add(current_line + ":" + (current_index + 1));
+            token_content.add(token + "");
+            return true;
         }
-        
-        else if(token==')'){
-            output.write("RIGHTPAR "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("RIGHTPAR");
-        }   
-            
-        else if(token=='['){
-            output.write("LEFTSQUAREB "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("LEFTSQUAREB");
-
-        }
-            
-        else if(token==']'){
-            output.write("RIGHTSQUAREB "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("RIGHTSQUAREB");
-        }
-            
-
-        else if(token=='{'){
-            output.write("LEFTCURLYB "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("LEFTCURLYB");
-        }
-        
-        else if(token=='}'){
-            output.write("RIGHTCURLYB "+current_line+":"+(current_index+1)+"\n");
-            tokens.add("RIGHTCURLYB");
-        }
-        
-        else return false;
-        
-
-        System.out.println(tokens.get(tokens.size()-1)+" "+current_line+":"+(current_index+1));
-        positions.add(current_line+":"+(current_index+1));
-        token_content.add(token+"");
-  
-        return true;
+        return false;
     }
+    
 
 
     // It provides the first condition of hexademical or binary notation.
@@ -89,7 +76,6 @@ class LexicalAnalyzer{
         return (line.length()-current_index-1>=1 && line.charAt(current_index)=='0' && (line.charAt(current_index+1) =='x' || line.charAt(current_index+1)=='b'));
 
     }
-
 
 
     // Method for boolean literals
@@ -105,12 +91,7 @@ class LexicalAnalyzer{
         }  
         
         if(boolean_checker.equals("true") || boolean_checker.equals("false")){
-            System.out.println("BOOLEAN "+current_line+":"+(current_index+1));
-            output.write("BOOLEAN "+current_line+":"+(current_index+1)+"\n");
-            current_index = i;
-            tokens.add("BOOLEAN");
-            positions.add(current_line+":"+(current_index+1));
-            token_content.add(boolean_checker);
+            handlePrints(i, boolean_checker, "BOOLEAN");
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
             return true;
@@ -122,7 +103,6 @@ class LexicalAnalyzer{
 
     
     
-
     public static boolean charLiterals(String line) throws IOException{
         if(current_index>=line.length())
             return true;
@@ -188,17 +168,12 @@ class LexicalAnalyzer{
                 
                 if(isBracketExist(line.charAt(i)))
                     break;
-
                 if(!identifierElementCheck(line.charAt(i))){
                     error_exist = true;
                     error_line = current_line;
                     error_position = current_index+1;
                 }
-                    
-                    
-                
                 error+=line.charAt(i);
-
             }
 
             if(error_exist){
@@ -206,13 +181,7 @@ class LexicalAnalyzer{
                 System.exit(0);
             }
             else{
-                System.out.println("IDENTIFIER "+current_line+":"+(current_index+1));
-                tokens.add("IDENTIFIER");
-                positions.add(current_line+":"+(current_index+1));
-                token_content.add(error);
-                output.write("IDENTIFIER "+current_line+":"+(current_index+1)+"\n");
-
-                current_index = i;
+                handlePrints(i, error, "IDENTIFIER");
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(i));
                 return true;
@@ -247,6 +216,7 @@ class LexicalAnalyzer{
             tokens.add(identifier);
             positions.add(current_line+":"+(current_index+1));
             token_content.add(identifier);
+            // handlePrints(i, identifier.toUpperCase(), identifier.toUpperCase());
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
             return true;
@@ -323,12 +293,7 @@ class LexicalAnalyzer{
 
             // Otherwise, line and position that token is been is displayed on the console.
             else{
-                output.write("NUMBER "+current_line+":"+(current_index+1)+"\n");
-                System.out.println("NUMBER "+current_line+":"+(current_index+1));
-                current_index = i;
-                tokens.add("NUMBER");
-                positions.add(current_line+":"+(current_index+1));
-                token_content.add(error);
+                handlePrints(i, error, "NUMBER");
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(i));
                 return true;
@@ -426,13 +391,7 @@ class LexicalAnalyzer{
 
             // Otherwise, line and position that token is been is displayed on the console.
             else{
-                System.out.println("NUMBER "+current_line+":"+(current_index+1));
-                output.write("NUMBER "+current_line+":"+(current_index+1)+"\n");
-                tokens.add("NUMBER");
-                positions.add(current_line+":"+(current_index+1));
-                token_content.add(error);
-                current_index = i;
-
+                handlePrints(i, error, "NUMBER");
                 if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                     printBracket(line.charAt(current_index));
                 return true;
