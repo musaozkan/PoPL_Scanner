@@ -23,7 +23,7 @@ class LexicalAnalyzer{
     public static ArrayList<String> positions = new ArrayList<>();
     public static ArrayList<String> token_content = new ArrayList<>();
     public static int token_index = 0;
-
+    public static boolean error_exist = false;
 
     public static boolean isBracketExist(char token){
     
@@ -37,6 +37,15 @@ class LexicalAnalyzer{
         tokens.add(contentType);
         positions.add(current_line+":"+(current_index+1));
         token_content.add(content);
+    }
+
+    public static void errorExist(boolean condition){
+
+        if(condition && !error_exist){
+            error_exist = true;
+            error_line = current_line;
+            error_position = current_index+1;
+        }
     }
 
     public static void shootError(String error) throws IOException{
@@ -161,7 +170,7 @@ class LexicalAnalyzer{
         int i = current_index;
 
         String error ="";
-        boolean error_exist = false;  
+        error_exist = false;  
         if(checkIdentifierFirstElement(line.charAt(current_index))){
             error+=line.charAt(current_index);
             for(i = current_index+1;i<line.length() && line.charAt(i) !=' ';i++){
@@ -238,7 +247,7 @@ class LexicalAnalyzer{
         // This condition checks the input according to hexadecimal notation and binary notation.
         int i = 0;
         String error = "";
-        boolean error_exist = false;
+        error_exist = false;
 
         // It includes hexadecimal literal and binary literal in
         if(isHexorBin(line)){
@@ -321,48 +330,17 @@ class LexicalAnalyzer{
                 if(isBracketExist(line.charAt(i))){
                     break;
                 }
-
-                // If the element of the token is not convenient with floating point literal, error occurs.
-                if(line.charAt(i) != 'E' && line.charAt(i) !='e' && line.charAt(i)!='+' && line.charAt(i) !='-' && line.charAt(i)!='.' && (line.charAt(i)<'0' || line.charAt(i)>'9')){
-                    
-                    error_exist = true;
-                    error_line = current_line;
-                    error_position = current_index+1;
-                }   
-                    
-                    
-
+                
+                // If symbol is out of the symbols given in the condition below, error occurs.
+                errorExist(line.charAt(i) != 'E' && line.charAt(i) !='e' && line.charAt(i)!='+' && line.charAt(i) !='-' && line.charAt(i)!='.' && (line.charAt(i)<'0' || line.charAt(i)>'9'));    
                 // If there is more than one exponential symbol in the token, error occurs.
-                else if(exponential_used && (line.charAt(i)=='e' || line.charAt(i)=='E' || line.charAt(i)=='.')){
-                    error_exist = true;
-                    error_line = current_line;
-                    error_position = current_index+1;
-                }
-                    
-
-
+                errorExist(exponential_used && (line.charAt(i)=='e' || line.charAt(i)=='E' || line.charAt(i)=='.'));
                 // If there is a symbol other than exponential symbol before addition or subtraction, error occurs.
-                else if(i>=0 && (line.charAt(i-1)!='e' && line.charAt(i-1)!='E') && (line.charAt(i) =='+' || line.charAt(i)=='-')){
-                    error_exist = true;
-                    error_line = current_line;
-                    error_position = current_index+1;
-                }
-                    
-
-
+                errorExist(i>=0 && (line.charAt(i-1)!='e' && line.charAt(i-1)!='E') && (line.charAt(i) =='+' || line.charAt(i)=='-'));
                 // If there is more than one dot sign, error occurs.
-                else if(isFloatFirst && line.charAt(i)=='.'){
-                    error_exist = true;
-                    error_line = current_line;
-                    error_position = current_index+1;
-                }
-
-                else if(i>=0  && (line.charAt(i-1)<'0' || line.charAt(i-1)>'9') && (line.charAt(i)=='E' || line.charAt(i)=='e')){
-                    error_exist = true;
-                    error_line = current_line;
-                    error_position = current_index+1;
-                }
-                    
+                errorExist(isFloatFirst && line.charAt(i)=='.');
+                
+                errorExist(i>=0  && (line.charAt(i-1)<'0' || line.charAt(i-1)>'9') && (line.charAt(i)=='E' || line.charAt(i)=='e'));
 
                 // It arranges boolean expression if element is exponential.
                 if(line.charAt(i) =='E' || line.charAt(i)=='e')
