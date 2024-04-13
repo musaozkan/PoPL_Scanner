@@ -11,8 +11,6 @@ import java.io.FileNotFoundException;
 // Abdullah Kan 150121076
 
 // This code implements both lexical analyzer and parse tree and prints the results on both console and on output.txt file.
-
-
 class LexicalAnalyzer{
     public static int current_line = 1;
     public static int current_index = 0;
@@ -29,7 +27,6 @@ class LexicalAnalyzer{
     
         return token==')' || token=='(' || token=='{' || token =='{' || token == '[' || token ==']';
     }
-
     public static void handlePrints(int index, String content, String contentType) throws IOException{
         System.out.println(contentType+" "+current_line+":"+(current_index+1));
         output.write(contentType+" "+current_line+":"+(current_index+1)+"\n");
@@ -46,10 +43,9 @@ class LexicalAnalyzer{
             error_position = current_index+1;
         }
     }
-
-    public static void shootError(String error) throws IOException{
-        output.write("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
-        System.out.println("LEXICAL ERROR "+"["+current_line+":"+(current_index+1)+"]:"+" Invalid token "+ "'"+error+"'");
+    public static void shootError(String error, int error_line, int error_index) throws IOException{
+        output.write("LEXICAL ERROR "+"["+error_line+":"+(error_index)+"]:"+" Invalid token "+ "'"+error+"'");
+        System.out.println("LEXICAL ERROR "+"["+error_line+":"+(error_index)+"]:"+" Invalid token "+ "'"+error+"'");
         output.flush();
         output.close();
     }
@@ -74,15 +70,11 @@ class LexicalAnalyzer{
         }
         return false;
     }
-    
     // It provides the first condition of hexademical or binary notation.
     // It checks the first two elements of the token.
     public static boolean isHexorBin(String line){
-
         return (line.length()-current_index-1>=1 && line.charAt(current_index)=='0' && (line.charAt(current_index+1) =='x' || line.charAt(current_index+1)=='b'));
-
     }
-
     // Method for boolean literals
     public static boolean booleanLiterals(String line) throws IOException{
         if(current_index>=line.length())
@@ -103,17 +95,15 @@ class LexicalAnalyzer{
         return false;
 
     }
-
     public static boolean charLiterals(String line) throws IOException{
         if(current_index>=line.length())
             return true;
         int i = 0;
         if((int)line.charAt(current_index) ==39){
             String error  = "";
-            
             if(current_index+2==line.length() || (current_index+2<line.length() && (int)line.charAt(current_index+2)!=39)){
                 error = line.charAt(current_index)+""+line.charAt(current_index+1);
-                shootError(error);
+                shootError(error, current_line, current_index+1);
                 System.exit(0);
             }
             else if(current_index+2<line.length() && (int)line.charAt(current_index+2)==39){
@@ -124,23 +114,16 @@ class LexicalAnalyzer{
                 handlePrints(current_index, "'"+line.charAt(prev+1)+"'", "CHAR");
                 return true;
             }
-                
             else if(current_index+2<line.length() && (int)line.charAt(current_index+2)!=39){
                 error = line.charAt(current_index)+""+line.charAt(current_index+1);
-                shootError(error);
+                shootError(error, current_line, current_index+1);
                 System.exit(0);
             }
-
         }
         return false;
-
     }
-
     public static boolean identifierElementCheck(char token){
-
-        return token =='+' || token=='-' || token=='.' || (token>='0' && token<='9') || (token>='a' && token<='z') || (token>='A' && token<='Z');
-
-        
+        return token =='+' || token=='-' || token=='.' || (token>='0' && token<='9') || (token>='a' && token<='z') || (token>='A' && token<='Z');  
     }
     public static boolean checkIdentifierFirstElement(char token){
         return token=='!' || token=='?' || token=='>' || token=='<' || token=='=' || token=='/' || token==':' || token=='+' || token=='-'|| token=='.' || token=='*' ||
@@ -166,9 +149,8 @@ class LexicalAnalyzer{
                 }
                 error+=line.charAt(i);
             }
-
             if(error_exist){
-                shootError(error);
+                shootError(error, current_line, current_index+1);
                 System.exit(0);
             }
             else{
@@ -177,17 +159,10 @@ class LexicalAnalyzer{
                     printBracket(line.charAt(i));
                 return true;
             }
-            
-
         }
-
-
         return false;
     }
-
-
     public static boolean keywordLiteral(String line) throws IOException{
-
         if(current_index>=line.length())
             return true;
         String identifier = "";
@@ -197,9 +172,7 @@ class LexicalAnalyzer{
             if(isBracketExist(line.charAt(i)))
                 break;
             identifier+=line.charAt(i);
-            
         }
-
         if(identifier.equals("define") || identifier.equals("let") || identifier.equals("cond") || identifier.equals("if") ||identifier.equals("begin")){
             System.out.println(identifier.toUpperCase()+" "+current_line+":"+(current_index+1));
             output.write(identifier.toUpperCase()+" "+current_line+":"+(current_index+1)+"\n");
@@ -211,13 +184,9 @@ class LexicalAnalyzer{
             if(current_index<line.length() && isBracketExist(line.charAt(current_index)))
                 printBracket(line.charAt(i));
             return true;
-            
         }
         return false;
-            
-    
     }
-
     // Function for number literals.
     public static boolean numberLiterals(String line) throws IOException{
 
@@ -269,7 +238,7 @@ class LexicalAnalyzer{
             }
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
-                shootError(error);
+                shootError(error, current_line, current_index+1);
                 System.exit(0);
             }
             // Otherwise, line and position that token is been is displayed on the console.
@@ -326,7 +295,7 @@ class LexicalAnalyzer{
 
             // If there is error, it is displayed on the console and program is shut down
             if(error_exist){
-                shootError(error);
+                shootError(error, current_line, current_index+1);
                 System.exit(0);
             }
             // Otherwise, line and position that token is been is displayed on the console.
@@ -437,10 +406,7 @@ class LexicalAnalyzer{
                 current_index = 0;
             }
             if(string_literal){
-                System.out.println("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error_for_string+"'");
-                output.write("LEXICAL ERROR "+"["+error_line+":"+error_position+"]:"+" Invalid token "+ "'"+error_for_string+"'");
-                output.flush();
-                output.close();
+                shootError(error_for_string, error_line, error_position);
                 System.exit(0);
             }
             input.close();
